@@ -2,14 +2,17 @@ from audioop import reverse
 from sys import stdout, stderr
 import copy
 from tkinter import filedialog
+import pylab as pl
+from pylab import pi
 
 
 
 class Bankomat:
     trezor = {}
 
-    def __init__(self) -> None:
+    def __init__(self,znamky_ben) -> None:
         self.ben = 1
+        self.ZNAMKY = znamky_ben
 
     def read(self,jmeno_body):
         soubor = open(jmeno_body, "r")
@@ -49,10 +52,34 @@ class Bankomat:
                 body[klic] = 5
         print(body)
         return body
+    
+    def write(self,zapis):
+        if zapis == False:
+            return False
+        else:
+            with open(self.ZNAMKY, mode='w') as soubor:
+                soubor.write("")
+            with open(self.ZNAMKY, mode='a') as soubor:
+                for klic, value in zapis.items():
+                    soubor.writelines(str(klic)+" "+str(zapis[klic]))
+                    soubor.writelines("\n")
+        soubor.close()
 
+        return True or False
+    
+    def prumer(self,znamky):
+        prumer_tridy = 0
+        pocet_zaku = 0
+        for klyc,value in znamky.items():
+            prumer_tridy +=value
+            pocet_zaku +=1
+        print(prumer_tridy)
+        prumer_tridy = prumer_tridy / pocet_zaku
+        print(prumer_tridy)
+        return prumer_tridy
 
 if __name__ == "__main__":
-    bankomat = Bankomat()
+    bankomat = Bankomat("znamky_ben.txt")
 
     while True:
         try:
@@ -64,6 +91,8 @@ if __name__ == "__main__":
             #print(znamky)
             print("BEN")
             znamky = bankomat.make(body,bodovani)
+            bankomat.write(znamky)
+            prumer_tridy = bankomat.prumer(znamky)
         except EOFError:
             exit(0)
         except KeyboardInterrupt:
