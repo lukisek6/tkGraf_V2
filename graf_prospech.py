@@ -28,16 +28,16 @@ class MyEntry(tk.Entry):
         self.variable.set(new)
 
 
-#class About(tk.Toplevel):
-#    def __init__(self, parent):
-#        super().__init__(parent, class_=parent.name)
-#        self.config()
-#
-#        btn = tk.Button(self, text="Konec", command=self.close)
-#        btn.pack()
-#
-#    def close(self):
-#        self.destroy()
+class About(tk.Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent, class_=parent.name)
+        self.config()
+
+        btn = tk.Button(self, text="Konec", command=self.close)
+        btn.pack()
+
+    def close(self):
+        self.destroy()
 
 
 class Application(tk.Tk):
@@ -55,6 +55,11 @@ class Application(tk.Tk):
         self.znamky = bankomat.make(self.body,self.bodovani)
         bankomat.write(self.znamky)
         self.prumer_tridy = bankomat.prumer(self.znamky)
+        self.jednickari = 0
+        self.dvojkari = 0
+        self.trojkari = 0
+        self.ctverkari = 0
+        self.petkari = 0
 
         #self.entry = tk.Entry()
         #self.entry.pack()
@@ -71,18 +76,33 @@ class Application(tk.Tk):
         self.entry.insert(0, file.name)
 
     def show(self):
+        for keys,value in self.znamky.items():
+            if value == 1:
+                self.jednickari +=1
+            elif value ==2:
+                self.dvojkari +=1
+            elif value ==3:
+                self.trojkari +=1
+            elif value ==4:
+                self.ctverkari +=1
+            elif value ==5:
+                self.petkari +=1
+
+        prumer = "Průměr třídy je "+str(self.prumer_tridy)
+
         fig, ax = plt.subplots()
 
-        fruits = ['apple', 'blueberry', 'cherry', 'orange']
-        counts = [40, 100, 30, 55]
-        bar_labels = ['red', 'blue', '_red', 'orange']
-        bar_colors = ['tab:red', 'tab:blue', 'tab:red', 'tab:orange']
+        grades = ['1', '2', '3', '4','5']
+        counts = [self.jednickari, self.dvojkari, self.trojkari, self.ctverkari,self.petkari]
+        #bar_labels = ['1', '2', '3', '4','5']
+        bar_colors = ['tab:green', 'tab:blue', 'tab:orange', 'tab:red','tab:red']
         
-        ax.bar(fruits, counts, label=bar_labels, color=bar_colors)
+        ax.bar(grades, counts, color=bar_colors)
         
-        ax.set_ylabel('fruit supply')
-        ax.set_title('Fruit supply by kind and color')
-        ax.legend(title='Fruit color')
+        ax.set_ylabel('Počet žáků')
+        ax.set_xlabel("Známka")
+        ax.set_title('Prospěch třídy')
+        ax.legend(title=prumer)
         
         plt.show()
 
